@@ -7,6 +7,9 @@ use App\Discussion;
 use App\Tools\FileManager\BaseManager;
 use App\Tools\FileManager\UpyunManager;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Database\Events\QueryExecuted;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 
@@ -28,6 +31,25 @@ class AppServiceProvider extends ServiceProvider
         ]);
 
         Schema::defaultStringLength(191);
+
+        DB::listen(function (QueryExecuted $query) {
+            if ($query->time < 100) {
+//                return;
+            }
+            if (app()->environment('production')) {
+                if ($query->time >= 1000) {
+                    // TODO:print full sql
+                    Log::warning("SlowSQL:", [$query->sql, $query->bindings, $query->time]);
+                }
+            } else {
+                if ($query->time >= 1000) {
+                    // TODO:print full sql
+                    Log::warning("SlowSQL:", [$query->sql, $query->bindings, $query->time]);
+                } else {
+                    Log::info("SQL:", [$query->sql, $query->bindings, $query->time]);
+                }
+            }
+        });
     }
 
     /**
