@@ -76,10 +76,10 @@ return [
     | The application locale determines the default locale that will be used
     | by the translation service provider. You are free to set this value
     | to any of the locales which will be supported by the application.
-    |
+    | available options: en/zh_cn
     */
 
-    'locale' => 'zh-CN',
+    'locale' => env('LOCALE', 'zh_cn'),
 
     /*
     |--------------------------------------------------------------------------
@@ -92,7 +92,7 @@ return [
     |
     */
 
-    'fallback_locale' => 'en',
+    'fallback_locale' => env('LOCALE', 'zh_cn'),
 
     /*
     |--------------------------------------------------------------------------
