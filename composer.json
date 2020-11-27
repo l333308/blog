@@ -6,6 +6,7 @@
     "type": "project",
     "require": {
         "php": "^7.2.5",
+        "barryvdh/laravel-ide-helper": "^2.8",
         "dflydev/apache-mime-types": "^1.0",
         "erusev/parsedown": "^1.7",
         "fideloper/proxy": "^4.2",
