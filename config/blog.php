@@ -68,6 +68,10 @@ return [
             'open' => true,
             'url'  => 'https://twitter.com/pigjian'
         ],
+        'beian' => [
+            'open' => true,
+            'url'  => 'http://beian.miit.gov.cn'
+        ],
         'meta' => '© PJ Blog 2016. Powered By Jiajian Chan',
     ],
 
