@@ -24,6 +24,7 @@
         "league/fractal": "^0.17",
         "league/html-to-markdown": "^4.8",
         "predis/predis": "^1.1",
+        "rmccue/requests": "^1.7",
         "spatie/laravel-permission": "^3.12",
         "tucker-eric/eloquentfilter": "^2.3",
         "yzalis/identicon": "^1.2"
