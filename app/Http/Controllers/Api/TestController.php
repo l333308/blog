@@ -25,11 +25,6 @@ class TestController extends ApiController
             $result = $redis->lpop($redisKey);
             if ($result){
                 // 订单入库
-                $data = [
-                    'user_id' => $userId,
-                    'goods_id' => $goodsId,
-                    'goods_num' => 1
-                ];
                 $order = new TestingOrder();
                 $order->user_id = $userId;
                 $order->goods_id = $goodsId;

@@ -44,7 +44,7 @@ class TestOversaleOrder extends Command
         $redis = Redis::connection();
 
         $goodsList = TestingGoods::all();
-        /*foreach($goodsList as $goods) {
+        foreach($goodsList as $goods) {
             // 商品库存信息入redis
             $redisKey = "testing_goods_{$goods->id}";
             for($i = 0; $i < $goods->num; $i++){
@@ -52,7 +52,7 @@ class TestOversaleOrder extends Command
                 echo $result;
                 echo PHP_EOL;
             }
-        }*/
+        }
 
         foreach($goodsList as $goods) {
             // 模拟高并发抢购
