@@ -54,15 +54,24 @@ class TestOversaleOrder extends Command
             }
         }
 
-        foreach($goodsList as $goods) {
-            // 模拟高并发抢购
-            $domain = env('APP_URL') .'api/test/oversale';
-            foreach(range(1, 4000) as $userId) {
-                $result = RequestUtil::sendRequest($domain, 'post', ['user_id' => $userId, 'goods_id' => $goods->id]);
+        // 本地、腾讯云线上 每秒最多生成35条数据 然后就报502 因此此处写每秒插入30条
+        $round = 0;
+        $userPerRound = 30;
+        while ($round < 80){
+            foreach($goodsList as $goods) {
+                // 模拟高并发抢购
+                $domain = env('APP_URL') .'api/test/oversale';
+                $userStart = $round * $userPerRound + 1;
+                $userEnd = $userStart + $userPerRound;
+                foreach(range($userStart, $userEnd) as $userId) {
+                    $result = RequestUtil::sendRequest($domain, 'post', ['user_id' => $userId, 'goods_id' => $goods->id]);
 
-                print_r($result);
-                echo PHP_EOL;
+                    print_r($result);
+                    echo PHP_EOL;
+                }
             }
+            $round++;
+            sleep(1);
         }
     }
 }
