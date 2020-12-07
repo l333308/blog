@@ -17,10 +17,11 @@ class TestController extends ApiController
         try{
             $userId = $request->input('user_id');
             $goodsId = $request->input('goods_id');
+            $keyPrefix = $request->input('redis_key_prefix');
 
             $redis = Redis::connection();
             // key逻辑取自Command/TestOversaleOrder
-            $redisKey = "testing_goods_{$goodsId}";
+            $redisKey = $keyPrefix ."{$goodsId}";
 
             $result = $redis->lpop($redisKey);
             if ($result){

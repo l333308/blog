@@ -35,6 +35,8 @@ class TestOversaleOrder extends Command
     }
 
     /**
+     * 经nginx 再调php接口
+     *
      * Execute the console command.
      *
      * @return mixed
@@ -57,14 +59,18 @@ class TestOversaleOrder extends Command
         // 本地、腾讯云线上 每秒最多生成35条数据 然后就报502 因此此处写每秒插入30条
         $round = 0;
         $userPerRound = 30;
+        $redisKeyPrefix = 'testing_goods_';
+        $params = ['redis_key_prefix' => $redisKeyPrefix];
         while ($round < 80){
             foreach($goodsList as $goods) {
                 // 模拟高并发抢购
                 $domain = env('APP_URL') .'api/test/oversale';
                 $userStart = $round * $userPerRound + 1;
                 $userEnd = $userStart + $userPerRound;
+                $params['goods_id'] = $goods->id;
                 foreach(range($userStart, $userEnd) as $userId) {
-                    $result = RequestUtil::sendRequest($domain, 'post', ['user_id' => $userId, 'goods_id' => $goods->id]);
+                    $params['user_id'] = $userId;
+                    $result = RequestUtil::sendRequest($domain, 'post', $params);
 
                     print_r($result);
                     echo PHP_EOL;
