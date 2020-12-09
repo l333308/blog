@@ -67,7 +67,7 @@ class TestOversaleOrderTwo extends Command
                 $orderCreatingRequest->query->set('user_id', $userId);
                 $result = app(TestController::class)->oversaleCreateOrder($orderCreatingRequest);
 
-                print_r($result);
+                print_r($result->original);
                 echo PHP_EOL;
             }
         }
