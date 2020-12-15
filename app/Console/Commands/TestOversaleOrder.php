@@ -86,6 +86,7 @@ class TestOversaleOrder extends Command
             }
         }
 
+        unset($userList);
     }
 
     private function _add_inventory_to_redis(Collection $goodsList)
