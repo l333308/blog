@@ -17,6 +17,7 @@ class CreateTestingGoodsTable extends Migration
             $table->string('name')->index();
             $table->float('price', 6, 2, true);
             $table->unsignedInteger('num');
+            $table->unsignedInteger('version')->default(0);
         });
 
         Schema::create('testing_orders', function (Blueprint $table) {

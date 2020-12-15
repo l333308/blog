@@ -4,6 +4,7 @@
 namespace App\Console\Commands;
 
 
+use App\Http\Controllers\Api\TestController;
 use App\Support\RequestUtil;
 use App\TestingGoods;
 use Illuminate\Console\Command;
@@ -17,7 +18,9 @@ class TestOversaleOrder extends Command
      *
      * @var string
      */
-    protected $signature = 'test:oversaleOrder';
+    protected $signature = 'test:oversaleOrder
+                            {type? : Type of creating order}
+                            {redisPushList? : redis list action}';
 
     /**
      * The console command description.
@@ -35,7 +38,8 @@ class TestOversaleOrder extends Command
     }
 
     /**
-     * 经nginx 再调php接口
+     *  不经nginx 直接调php接口
+     * type 1:redis队列 2:mysql悲观锁 3:不作处理
      *
      * Execute the console command.
      *
@@ -43,41 +47,51 @@ class TestOversaleOrder extends Command
      */
     public function handle()
     {
-        $redis = Redis::connection();
+        $type = $this->argument('type') ? :1;
+        $redisPushList = $this->argument('redisPushList');
+        switch ($type){
+            case 1:
+                $method = 'createOrderByRedisList';
+                break;
+            case 2:
+                $method = 'createOrderByPessimisticLock';
+                break;
+            case 3:
+                $method = 'createOrderOversale';
+                break;
+            default:
+        }
 
         $goodsList = TestingGoods::all();
+        $orderCreatingRequest = new Request();
+        $redisKeyPrefix = 'testing_goods_';
+        $orderCreatingRequest->query->set('redis_key_prefix', $redisKeyPrefix);
+
+        if ($type == 1 && $redisPushList){
+            $redis = Redis::connection();
+
+            foreach($goodsList as $goods) {
+                // 商品库存信息入redis
+                $redisKey = "testing_goods_{$goods->id}";
+                for($i = 0; $i < $goods->num; $i++){
+                    $result = $redis->lpush($redisKey, 1);
+                    echo $result;
+                    echo PHP_EOL;
+                }
+            }
+        }
+
         foreach($goodsList as $goods) {
-            // 商品库存信息入redis
-            $redisKey = "testing_goods_{$goods->id}";
-            for($i = 0; $i < $goods->num; $i++){
-                $result = $redis->lpush($redisKey, 1);
-                echo $result;
+            // 模拟高并发抢购
+            $orderCreatingRequest->query->set('goods_id', $goods->id);
+            foreach(range(1, 120000) as $userId) {
+                $orderCreatingRequest->query->set('user_id', $userId);
+                $result = app(TestController::class)->$method($orderCreatingRequest);
+
+                print_r($result->original);
                 echo PHP_EOL;
             }
         }
 
-        // 本地、腾讯云线上 每秒最多生成35条数据 然后就报502 因此此处写每秒插入30条
-        $round = 0;
-        $userPerRound = 30;
-        $redisKeyPrefix = 'testing_goods_';
-        $params = ['redis_key_prefix' => $redisKeyPrefix];
-        while ($round < 80){
-            foreach($goodsList as $goods) {
-                // 模拟高并发抢购
-                $domain = env('APP_URL') .'api/test/oversale';
-                $userStart = $round * $userPerRound + 1;
-                $userEnd = $userStart + $userPerRound;
-                $params['goods_id'] = $goods->id;
-                foreach(range($userStart, $userEnd) as $userId) {
-                    $params['user_id'] = $userId;
-                    $result = RequestUtil::sendRequest($domain, 'post', $params);
-
-                    print_r($result);
-                    echo PHP_EOL;
-                }
-            }
-            $round++;
-            sleep(1);
-        }
     }
 }

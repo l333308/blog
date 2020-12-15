@@ -16,7 +16,6 @@ class Kernel extends ConsoleKernel
         Commands\BlogInstall::class,
         Commands\CreateAdmin::class,
         Commands\TestOversaleOrder::class,
-        Commands\TestOversaleOrderTwo::class,
     ];
 
     /**
