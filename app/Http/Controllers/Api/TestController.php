@@ -26,14 +26,8 @@ class TestController extends ApiController
             // key逻辑取自Command/TestOversaleOrder
             $redisKey = $keyPrefix ."{$goodsId}";
 
-            $goods = TestingGoods::find($goodsId);
             $result = $redis->lpop($redisKey);
             if ($result){
-                // 商品库存
-                $goods->num--;
-                $goods->version++;
-                $goods->save();
-
                 // 订单入库
                 $order = new TestingOrder();
                 $order->user_id = $userId;
