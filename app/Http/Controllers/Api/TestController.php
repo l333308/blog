@@ -41,10 +41,11 @@ class TestController extends ApiController
                 $order->goods_num = 1;
                 $order->save();
 
+                DB::commit();
                 return $this->response->json(['status' => 'success', 'msg' => '下单成功', 'result' => $result]);
             }else{
+                DB::rollBack();
                 return $this->response->json(['status' => 'error', 'msg' => '下单失败']);
-
             }
         }catch (\Exception $e) {
             DB::rollBack();
