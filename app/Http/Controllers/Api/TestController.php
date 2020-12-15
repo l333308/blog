@@ -16,6 +16,7 @@ class TestController extends ApiController
 {
     public function createOrderByRedisList(Request $request)
     {
+        DB::beginTransaction();
         try{
             $userId = $request->input('user_id');
             $goodsId = $request->input('goods_id');
@@ -25,8 +26,14 @@ class TestController extends ApiController
             // key逻辑取自Command/TestOversaleOrder
             $redisKey = $keyPrefix ."{$goodsId}";
 
+            $goods = TestingGoods::find($goodsId);
             $result = $redis->lpop($redisKey);
             if ($result){
+                // 商品库存
+                $goods->num--;
+                $goods->version++;
+                $goods->save();
+
                 // 订单入库
                 $order = new TestingOrder();
                 $order->user_id = $userId;
@@ -40,6 +47,7 @@ class TestController extends ApiController
 
             }
         }catch (\Exception $e) {
+            DB::rollBack();
             throw $e;
         }
     }

@@ -76,7 +76,7 @@ class TestOversaleOrder extends Command
         foreach($goodsList as $goods) {
             // 模拟高并发抢购
             $orderCreatingRequest->query->set('goods_id', $goods->id);
-            foreach(range(1, 120000) as $userId) {
+            foreach(range(1, 50000) as $userId) {
                 $orderCreatingRequest->query->set('user_id', $userId);
                 $result = app(TestController::class)->$method($orderCreatingRequest);
 
