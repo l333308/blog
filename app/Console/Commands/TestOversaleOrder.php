@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\TestController;
 use App\Support\RequestUtil;
 use App\TestingGoods;
 use Illuminate\Console\Command;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redis;
 
@@ -68,17 +69,8 @@ class TestOversaleOrder extends Command
         $orderCreatingRequest->query->set('redis_key_prefix', $redisKeyPrefix);
 
         if ($type == 1 && $redisPushList){
-            $redis = Redis::connection();
-
-            foreach($goodsList as $goods) {
-                // 商品库存信息入redis
-                $redisKey = "testing_goods_{$goods->id}";
-                for($i = 0; $i < $goods->num; $i++){
-                    $result = $redis->lpush($redisKey, 1);
-                    echo $result;
-                    echo PHP_EOL;
-                }
-            }
+            $this->_add_inventory_to_redis($goodsList);
+            exit();
         }
 
         foreach($goodsList as $goods) {
@@ -93,5 +85,23 @@ class TestOversaleOrder extends Command
             }
         }
 
+    }
+
+    private function _add_inventory_to_redis(Collection $goodsList)
+    {
+        $redis = Redis::connection();
+
+        $result = 0;
+        foreach($goodsList as $goods) {
+            // 商品库存信息入redis
+            $redisKey = "testing_goods_{$goods->id}";
+            for($i = 0; $i < $goods->num; $i++){
+                $result = $redis->lpush($redisKey, 1);
+                print_r($result);
+                echo PHP_EOL;
+            }
+        }
+
+        return $result;
     }
 }
