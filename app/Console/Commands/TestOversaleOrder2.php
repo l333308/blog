@@ -59,7 +59,7 @@ class TestOversaleOrder2 extends Command
                 // 模拟高并发抢购
                 $domain = env('APP_URL') .'api/test/create_order_by_redis_list';
                 foreach($userList as $userId) {
-                    $result = RequestUtil::sendRequest($domain, 'post', ['user_id' => $userId, 'goods_id' => $goods->id]);
+                    $result = RequestUtil::sendRequest($domain, 'post', ['user_id' => $userId, 'goods_id' => $goods->id, 'redis_key_prefix' => 'testing_goods_']);
 
                     print_r($result);
                     echo PHP_EOL;
