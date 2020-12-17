@@ -73,7 +73,7 @@ class TestOversaleOrder extends Command
             exit();
         }
 
-        $userList = range(1, 100000);
+        $userList = range(1, 10000);
         foreach($goodsList as $goods) {
             // 模拟高并发抢购
             $orderCreatingRequest->query->set('goods_id', $goods->id);
@@ -85,8 +85,6 @@ class TestOversaleOrder extends Command
                 echo PHP_EOL;
             }
         }
-
-        unset($userList);
     }
 
     private function _add_inventory_to_redis(Collection $goodsList)

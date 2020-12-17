@@ -93,5 +93,5 @@ Route::group([
     Route::get('tags', 'TagController@getList');
 
     // Testing
-    Route::post('test/oversale', 'TestController@oversaleCreateOrder');
+    Route::post('test/create_order_by_redis_list', 'TestController@createOrderByRedisList');
 });
