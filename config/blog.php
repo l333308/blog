@@ -72,7 +72,7 @@ return [
             'open' => true,
             'url'  => 'http://beian.miit.gov.cn'
         ],
-        'meta' => '© SevAn-Blog 2020.',
+        'meta' => '© SevAn-Blog 2022.',
     ],
 
     'license' => 'Powered By Jiajian Chan.<br/>This article is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">Creative Commons Attribution-NonCommercial 4.0 International License</a>.',

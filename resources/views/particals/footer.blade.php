@@ -24,7 +24,7 @@
                     @endif
                 </ul>
                 <div class="links">
-                    <a href="{{ config('blog.footer.beian.url') }}">粤ICP备2022099994</a>
+                    <a href="{{ config('blog.footer.beian.url') }}">粤ICP备2022099994号-1</a>
                 </div>
             </div>
         </div>
